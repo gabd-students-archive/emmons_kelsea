@@ -14,8 +14,8 @@ This video is from one of my **favorite** shows called *Reno 911*. Growing up, I
 ---
 
 ### Top 3 Favorite Foods
-* Steak\
-* Lasagna\
+* Steak
+* Lasagna
 * Shrimp Scampi
 
 ---
