@@ -63,7 +63,28 @@ kable(head(airquality),
       align= c("r", "r", "c", "c", "l", "l"),
       col.names = c("Ozone (ppb)", "Solar R (lang)", "Wind (mph)", "Temp (°F)", "Month", "Day"))
 ```
+```{r}
+chicks_lm <- lm(weight ~ feed, data = chickwts)
 
+summary(chicks_lm)
+```
+```{r}
+kable(chickwts)
+```
+# When I ran kable(chick_wts) like it was in the instructions, I got an error. However, when I ran kable(chickwts) with no underscore, I got a list of values and their associated types of feed.
+
+```{r}
+xtable(chicks_lm) %>% kable()
+```
+```{r}
+trees_lm <- lm(Girth ~ Height, data = trees)
+
+summary(trees_lm)
+```
+
+```{r}
+xtable(trees_lm) %>% kable()
+```
 
 
 
