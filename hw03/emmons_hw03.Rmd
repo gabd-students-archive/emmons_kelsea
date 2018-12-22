@@ -89,15 +89,14 @@ summary(trees_lm)
 xtable(trees_lm) %>% kable()
 ```
 
-```{r}
 $e = mc^2$
 
-$$\frac{\Delta N}{\Delta t} = rN\left(\frac{K-N}{K}\right).$$
-```
 
-```{r}
-$$ \chi_c^2 = \Sigma\frac{(O_i - E_i)^2}{E_i} $$
-```
+$\frac{\Delta N}{\Delta t} = rN\left(\frac{K-N}{K}\right).$
+
+
+$\chi_c^2 = \Sigma\frac{(O_i - E_i)^2}{E_i}$
+
 
 [id]: <https://i.imgur.com/xuDyBk6.png> "Coding is fun"
  
