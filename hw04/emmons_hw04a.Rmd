@@ -86,22 +86,58 @@ Whenever you plot 'class' vs 'drv', you end up with a plot that is pretty even a
 
 **1:** What’s gone wrong with this code? Why are the points not blue?
 
+They needed to put the 'blue' level outside of the aes().
 
 **2:** Which variables in `mpg` are categorical? Which variables are continuous? (*Hint:* type `?mpg` to read the documentation for the dataset). How can you see this information when you run mpg?
 
+The variables 'model', 'cyl', 'year', 'trans', 'drv', 'fl', and 'class' are all categorical. The variables 'displ', 'cty', and 'hwy' are continuous variables.
+When you run mpg you can see all the different categories.
 
 **3:** Map a continuous variable to color, size, and shape. How do these aesthetics behave differently for categorical vs. continuous variables? **Note:** You need several code chunks here to answer this question.
 
+Scatterplot of continuous variables with the color aesthetic.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = cty, color = hwy))
+```
+Scatterplot of continuous variables with the size aesthetic.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = cty, size = hwy))
+```
+Scatterplot of continuous variables with the shape aesthetic.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = cty, shape = hwy))
+```
+The aesthetics only work with specific types of variables. For instance, when I tried to run the shape aesthetic with a continuous variable, it returned with an error. Shape aesthetic works best with categorical data and not continuous data because the amount of different shapes would be infinite.
 
 **4:** What happens if you map the same variable to multiple aesthetics?
 
+Scatterplot of the same variable with multiple aesthetics color and size.
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = cty, color = hwy, size = hwy))
+```
+If you map the same variable with multiple aesthetics, will get two legends for the same variable.
 
 **5:** What does the stroke aesthetic do? What shapes does it work with? (*Hint:* use `?geom_point`)
 
+The 'stroke' aesthetic modifys the width of the border of the shape. This works with shapes 0-14 and 21-24.
+
+```{r}
+?geom_point
+```
 
 
 **6:** What happens if you map an aesthetic to something other than a variable name, like `aes(colour = displ < 5)`?
 
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = class, y = drv, color = displ <5))
+```
+
+When you map an aesthetic to something other than a variable name, it creates a TRUE and FALSE legend.
 
 ### Section 3.5: Facets
 
