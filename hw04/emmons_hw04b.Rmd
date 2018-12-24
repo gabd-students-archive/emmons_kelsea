@@ -1,0 +1,117 @@
+---
+title: "HW04 Part 2: Graph biological data"
+author: Kelsea Emmons
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(xtable)
+```
+
+#### Plot 1
+
+```{r}
+trees
+```
+
+```{r}
+ggplot(data = trees) + 
+  geom_point(mapping = aes(x = Height , y = Girth ))
+```
+There is not too much correlation in this scatterplot. However, it does run positively, which would mean girth increases with height.
+
+
+#### Plot 2
+
+```{r}
+year <- c(1821:1934)
+
+```
+```{r}
+pelts <- as.vector(lynx)
+
+```
+```{r}
+lynx_pelts <- data.frame(year, pelts)
+
+lynx_pelts
+  
+```
+
+```{r}
+ggplot(data = lynx_pelts, mapping = aes(x = year, y = pelts)) + 
+  geom_line(color = "maroon")
+```
+
+This linegraph shows drastic ups and downs in pelt quantities throughout 1821 to 1934.The best time for pelts seemed to be around the year 1905.
+
+#### Plot 3
+
+```{r}
+ggplot(data = iris) + 
+  geom_point(mapping = aes(x = Petal.Length, y = Petal.Width, color = Species, shape = Species), size = 2) +
+  xlab("Petal Length") +
+  ylab("Petal Width")
+```
+In this plot, you can see a couple of corrolations. The virginica species generally has the longest petal length while the setosa species has the shortest. Also, petal length and petal width have a positive correlation.
+
+#### Plots 4 and 5
+```{r}
+msleep
+```
+
+
+```{r}
+ggplot(data = msleep) + 
+  geom_violin(mapping = aes(x = vore, y = sleep_rem), fill = "grey70")
+```
+A violin plot is a type of graph that shows the shape of the distribution, its central value, and its variability.The difference in gray30 and gray70 is she shade of the gray. 30 was darker and 70 is lighter.
+
+#### Plot 7
+
+```{r}
+msleep
+```
+
+```{r}
+ggplot(data = msleep, mapping = aes(x = order, y = sleep_total)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+In this boxplot, I flipped the x and y axis to make room for the long names in the x axis. It should also be noted that the Chiroptera has the highest sleep total.
+
+#### Plot 8
+```{r}
+msleep
+```
+```{r}
+ggplot(data = msleep) +
+  geom_boxplot(mapping = aes(x = conservation, y = awake, color = conservation)) +
+  geom_point(mapping = aes(x = vore, y = sleep_rem, color = conservation)) +
+  geom_jitter(mapping = aes(x = vore, y = sleep_rem, color = conservation)) +
+  xlab("Conservation") +
+  ylab("Awake") +
+  scale_color_discrete(name = "Conservation") +
+  coord_flip()
+
+```
+In this plot, you can see that the highest awake hours were in the `cd` conservation variable. The lowest awake hours were in the `en` variable.
+
+#### Plots 9 and 10
+```{r}
+ggplot(data = msleep) + 
+  geom_point(mapping = aes(x = awake , y = bodywt, color = sleep_total))
+```
+To me, this plot shows that the awake variable is not dependant on the bodywt variable. However, if you look closely, you would notice that the y axis is skewed because of the one outlier that weighs over 6000kgs. That one outlier adjusted the scale of the plot, therefore making it hard to decipher all the other points since they are confined to a tight position.
+
+```{r}
+ggplot(data = msleep) + 
+  geom_point(mapping = aes(x = awake , y = brainwt, color = sleep_rem)) +
+  facet_wrap(~ vore, ncol = 2)
+```
+In this plot, its slightly easier to view because the types of eaters are separated into their own charts. It is cool to see that the herbivores had the highest brain weight and that the highest brain weight also had some of the longest awake hours.
