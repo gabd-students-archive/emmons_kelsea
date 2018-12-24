@@ -195,7 +195,7 @@ With large groups of data like this, it is easier to read and decipher instead o
 
 **6:** When using `facet_grid()` you should usually put the variable with more unique levels in the columns. Why?
 
-You should put the variable with more unique levels or more "sporadic" data in the columns because it will be more spaced out over the grid.
+You should put the variable with more unique levels or more "sporadic" data in the columns because it will be more spaced out over the grid instead of clustered.
 
 ### Section 3.6: Geometric objects
 
@@ -205,39 +205,93 @@ You should put the variable with more unique levels or more "sporadic" data in t
 
 **1:** What geom would you use to draw a line chart? A boxplot? A histogram? An area chart? **Note:** You will have to make some types of these charts in Part 2 of this assignment.
 
+To draw a line chart, you would use the line geom. For boxplots, the boxplot geom. For histograms, use the histogram geom. To create an area chart, use the area geom.
 
 **2:** Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
 
+This code will create a scatterplot with `displ` and `hwy` as the x and y axis respectively, and have `drv` as different color points across the grid. There will also be a smooth line following the corrolation of the data.
+
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
 
 
 **3:** What does `show.legend = FALSE` do? What happens if you remove it?
 **Note:** Skip the "Why do you think I used it earlier in the chapter?" question.
 
+This hides the legend from view next to the grid. If you remove the `show.legend = FALSE` command, the legend will automatically be created and visible.
 
 **4:** What does the `se` argument to `geom_smooth()` do?
 
+The `se` argument asks the question if you would like to display confidence interval around smooth, which is set to TRUE by default.
 
 **5:** Will these two graphs look different? Why/why not?
 
+They will look the same. All that is different is that one code passed a set of mappings to ggplot(). Adding this infor to the original data and then adding the geoms just adds layers to what is already plotted. The other code will do the same thing, you would just have to type it and check it, twice.
 
 **6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
 
 1: upper left.
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = 3), show.legend = FALSE) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, size = 3), se = FALSE, show.legend = FALSE)
+
+```
+
 
 2: upper right.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv, size = 3), se = FALSE, show.legend = FALSE) +
+  geom_point(mapping = aes(x = displ, y = hwy, size = 3), show.legend = FALSE)
+```
 
 
 3: middle left.
 
+```{r}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = drv, size = 3)) + 
+  geom_point() + 
+  geom_smooth(se = FALSE)
+  
+
+```
+
 
 4: middle right.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv, size = 3)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, size = 3), se = FALSE, show.legend = FALSE)
+
+```
 
 
 5: lower left.
 
+```{r}
+ggplot(data = mpg) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv, size = 3)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv, linetype = drv, size = 3), se = FALSE)
+
+```
+
 
 6: lower right. *Hint:* Read the help file for `geom_point`. Use `shape = 21`, `stroke = 2`, and `size = 3`.
+
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv, stroke = 2, size = 5), shape = 16, color = "white") +
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv, stroke = 2, size = 4), shape = 16)
+
+```
+
 
 ### Section 3.7: Statistical transformations.
 
