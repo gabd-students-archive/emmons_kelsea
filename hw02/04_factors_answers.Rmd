@@ -109,7 +109,7 @@ factor_temperature_vector
 
 When you first get a data set, you will often notice that it contains factors with specific factor levels. However, sometimes you will want to change the names of these levels for clarity or other reasons. R allows you to do this with the function `levels()`:
 
-```{r}
+```{r eval=FALSE}
 levels(factor_vector) <- c("name1", "name2",...)
 ```
 
@@ -155,7 +155,7 @@ factor_survey_vector
 
 After finishing this course, one of your favorite functions in R will be `summary()`. This will give you a quick overview of the contents of a variable:
 
-```{r}
+```{r eval=FALSE}
 summary(my_var)
 ```
 
@@ -253,7 +253,7 @@ speed_vector <- c("medium", "slow", "slow", "medium", "fast")
 
 `speed_vector` should be converted to an ordinal factor since its categories have a natural ordering. By default, the function `factor()` transforms `speed_vector` into an unordered factor. To create an ordered factor, you have to add two additional arguments: `ordered` and `levels`.
 
-```{r}
+```{r eval=FALSE}
 factor(some_vector,
        ordered = TRUE,
        levels = c("lev1", "lev2" ...))
