@@ -71,10 +71,11 @@ chicks_lm <- lm(weight ~ feed, data = chickwts)
 
 summary(chicks_lm)
 ```
-```{r}
+
+```{r error=TRUE}
 kable(chickwts)
 ```
-# When I ran kable(chick_wts) like it was in the instructions, I got an error. However, when I ran kable(chickwts) with no underscore, I got a list of values and their associated types of feed.
+# When I ran kable(chick_wts) like it was in the instructions, I got an error. However, when I ran kable(chickwts) with no underscore, I got a list of values and their associated types of feed.^[<https://i.imgur.com/xuDyBk6.png> "Coding is fun"]
 
 ```{r}
 xtable(chicks_lm) %>% kable()
