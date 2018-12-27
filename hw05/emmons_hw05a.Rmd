@@ -293,13 +293,35 @@ You do not have to run any of the examples in this section.
 
 Read and run the examples through section 12.3.1 (gathering), including the example with `left_join()`. We'll cover joins later.
 
+```{r}
+table4a
+```
+
+```{r}
+table4a %>%
+  gather(`1999`, `2000`, key = "year", value = "cases")
+```
+
+```{r}
+table4b %>% 
+  gather(`1999`, `2000`, key = "year", value = "population")
+```
+```{r}
+tidy4a <- table4a %>% 
+  gather(`1999`, `2000`, key = "year", value = "cases")
+tidy4b <- table4b %>% 
+  gather(`1999`, `2000`, key = "year", value = "population")
+left_join(tidy4a, tidy4b)
+```
+
+
 #### 12.3 Questions
 
 **2:** Why does this code fail? Fix it so it works.
-
+The 1999 and 2000 have to have ticks around them.
 ```{r}
 table4a %>% 
-  gather(1999, 2000, key = "year", value = "cases")
+  gather(`1999`, `2000`, key = "year", value = "cases")
 #> Error in inds_combine(.vars, ind_list): Position must be between 0 and n
 ```
 
