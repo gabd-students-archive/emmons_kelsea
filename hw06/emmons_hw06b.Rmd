@@ -1,0 +1,171 @@
+---
+title: "HW05 Part 2: Importing"
+author: "Kelsea Emmons"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(smatr)
+```
+
+###Darters in Riffles
+
+####Import Data
+```{r}
+file_path <- "C:\\BI485\\emmons_kelsea\\hw05\\darter.txt"
+widths <- fwf_widths(c(3,11,1,1,1,3,4,4,4,3,3,2,2 ))
+darter <- read_fwf("darter.txt", comment = "#", col_positions = widths)
+col_names <- c("id","species","riffle","age","sex","length","depth","velocity","temperature","majsub","minsub","majtype","mintype")
+colnames(darter) <- col_names
+darter <- filter(darter, species == "spectabile" | species == "caeruleum" | species == "blennioides")
+darter
+```
+
+####Wrangle Data
+```{r}
+mutate(darter,
+       total_substrate = majsub + minsub)
+```
+
+####Change Riffle Values
+```{r}
+mutate(darter,
+       riffle = ifelse(riffle == 1,
+                           "Riffle 1",
+                           "Riffle 2"))
+```
+
+Change Length Data from cm to mm.
+
+```{r}
+mutate(darter,
+       length = length * 10)
+```
+
+Change the sex values of f and m to Female and Male.
+
+```{r}
+mutate(darter,
+       sex = ifelse(sex == "f",
+                           "Female",
+                           "Male"))
+```
+
+####Summarize Data
+```{r}
+darter2 <- group_by(darter, species)
+darter_summary <- darter2 %>%
+  summarise(length = mean(length, na.rm = TRUE),
+          depth = mean(depth, na.rm = TRUE),
+          velocity = mean(velocity, na.rm = TRUE))
+darter_summary
+```
+
+####Table of Summary Means
+
+
+####Plot 1
+```{r}
+ggplot(data = darter2, mapping = aes(x = species, y = length)) +
+  stat_summary(
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median) +
+  geom_point(data = darter_summary, mapping = aes(x=species, y = length), shape = 15)  +
+  coord_flip() +
+  facet_wrap(~ riffle, nrow = 2) +
+  xlab("Species") +
+  ylab("Length (mm)")
+  
+```
+
+
+
+
+
+
+###Stress and Corticosterones in Birds
+####Import Data
+```{r}
+"C:\\BI485\\emmons_kelsea\\hw06\\feathers.csv"
+feathers <- read_csv("feathers.csv")
+feathers
+```
+I believe that this data is tidy. Each variable has its own column, each observation has its own row and each value has its own cell.
+
+```{r}
+format(feathers, decimal.more = ",")
+```
+
+
+```{r}
+names(feathers) <- c("capture_date", "day", "site", "urban_score", "cortF", "cortB", "sex", "smi", "tarsus", "mass", "basal_cort", "stress_cort")
+
+feathers
+```
+
+####Wrangle Data
+```{r}
+mean_tarsus <- summarise(feathers, mean_tarsus = mean(tarsus, na.rm = TRUE))
+```
+```{r}
+mean_tarsus
+```
+
+```{r}
+log_mass <- mutate(feathers, log(mass))
+
+log_tarsus <- mutate(feathers, log(tarsus))
+
+log_mass
+log_tarsus
+```
+
+```{r}
+major_axis <- sma(log_mass ~ log_tarsus, data = feathers)
+summary(major_axis)
+b <- coef(major_axis)
+```
+
+```{r}
+new_smi <- mutate(feathers, mass * (frac{mean_tarsus/tarsus})^b)
+```
+
+####Summarie Data
+```{r}
+basal_stress <- feathers %>%
+  group_by(site)
+
+basal_mean <- mutate(basal_stress, mean(basal_cort))
+stress_mean <- mutate(basal_stress, mean(stress_cort))
+sd_basal <- mutate(basal_stress, sd(basal_cort, na.rm = TRUE))
+sd_stress <- mutate(basal_stress, sd(stress_cort, na.rm = TRUE))
+
+seym_basal <- mutate(basal_stress, (sd_basal*n)^2)
+seym_stress <- mutate(basal_stress, (sd_stress*n)2)            
+
+```
+
+####Graph Data
+```{r}
+ggplot(data = feathers) + 
+  geom_boxplot(mapping = aes(x = new_smi, y = site))
+```
+
+```{r}
+ggplot(data = feathers) +
+  geom_point(mapping = aes(x = site, y = cortB)) +
+  geom_errorbar(mapping = aes(x = site, ymin = seym_basal - 1, ymax = seym_basal+1))
+```
+
+```{r}
+ggplot(data = feathers) +
+  geom_point(mapping = aes(x = stress_mean, y = seym_stress)) +
+  geom_linerage(mapping = aes(x = stress_mean, y = seym_stress))
+```
+
