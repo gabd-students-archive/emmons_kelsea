@@ -1,0 +1,125 @@
+---
+title: "HW05 Part 2: Importing"
+author: "Kelsea Emmons"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+###Limpets
+
+```{r}
+library(tidyverse)
+"C:\\BI485\\emmons_kelsea\\data\\limpets.csv"
+```
+```{r}
+read_csv("limpets.csv")
+```
+```{r}
+limpets <- read_csv("limpets.csv", col_types = "ncc")
+```
+
+```{r}
+limpets
+```
+
+```{r}
+limp <- factor(limpets, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"), ordered = TRUE)
+limp
+```
+```{r}
+ggplot(data = limpets) + 
+  geom_boxplot(mapping = aes(x = Site, y = Length, color = Protected))
+```
+
+
+```{r}
+ggplot(data = limpets) + 
+  geom_boxplot(mapping = aes(x = Site, y = Length, color = Protected)) +
+  xlab("Site") +
+  ylab("Length (mm)")
+```
+
+Description: In this grid, there are only 3 areas where the Limpets are protected. There are outliers in `DP` and `WP` and these outliers tend to be bigger than usual. 
+
+
+###Roseate Terns
+
+```{r}
+"C:\\BI485\\emmons_kelsea\\data\\roseate_terns.txt"
+```
+
+```{r}
+roseate_terns <- read_tsv("roseate_terns.txt")
+roseate_terns
+```
+
+```{r}
+roseate_tidy <- roseate_terns %>% 
+  gather(key = "pop_name", value = "pop_size", AR:JC)
+
+roseate_tidy
+```
+
+####Filter out missing counts.
+```{r}
+filter(roseate_tidy, !is.na(pop_size))
+```
+
+```{r}
+ggplot(data = roseate_tidy) + 
+  geom_line(mapping = aes(x = year, y = pop_size, color = pop_name)) +
+  xlab("Year") +
+  ylab("Population Size")
+```
+
+It looks like the AR population increased over time while the JR population obviously took a sharp decrease in the 90's and never got back up to what it once was. The line breaks in the data, to me, means that they do not have data for those groups during that time period.
+
+###Darters
+```{r}
+darter <- "C:\\BI485\\emmons_kelsea\\hw05\\darter.txt"
+darter
+
+
+```
+rename(flights, tail_num = tailnum)
+
+
+
+###Blacklip Abalone
+
+####Chunk 1
+```{r}
+"C:\\BI485\\emmons_kelsea\\data\\abalone.csv"
+abalone <- read_csv("abalone.csv")
+ggplot(data = abalone) + 
+  geom_boxplot(mapping = aes(x = Type, y = Height))
+```
+
+####Chunk 2
+```{r}
+ggplot(data = abalone) + 
+  geom_point(mapping = aes(x = Rings, y = Height))
+```
+Based on this scatterplot, the outliers were not that old.
+
+####Chunk 3
+```{r}
+filter(abalone, !is.na())
+```
+
+####Chunk 4
+```{r}
+filter(abalone, Height == 0)
+abalone2[abalone2 ==0] <- NA
+abalone2
+
+ggplot(data = abalone2) + 
+  geom_point(mapping = aes(x = Rings, y = Height))
+
+```
+
+####Chunk 5
+
+
