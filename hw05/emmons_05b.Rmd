@@ -1,0 +1,183 @@
+---
+title: "HW05 Part 2: Importing"
+author: "Kelsea Emmons"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+###Limpets
+
+```{r}
+library(tidyverse)
+"C:\\BI485\\emmons_kelsea\\data\\limpets.csv"
+```
+```{r}
+read_csv("limpets.csv")
+```
+```{r}
+limpets <- read_csv("limpets.csv", col_types = "ncc")
+```
+
+```{r}
+limpets
+```
+
+```{r}
+limp <- factor(limpets, levels = c("PBL", "KNRM", "VBG", "WP", "PF", "DP", "SIO", "CTZ1", "CTZ2", "CNM"), ordered = TRUE)
+limp
+```
+```{r}
+ggplot(data = limpets) + 
+  geom_boxplot(mapping = aes(x = Site, y = Length, color = Protected))
+```
+
+
+```{r}
+ggplot(data = limpets) + 
+  geom_boxplot(mapping = aes(x = Site, y = Length, color = Protected)) +
+  xlab("Site") +
+  ylab("Length (mm)")
+```
+
+Description: In this grid, there are only 3 areas where the Limpets are protected. There are outliers in `DP` and `WP` and these outliers tend to be bigger than usual. 
+
+
+###Roseate Terns
+
+```{r}
+"C:\\BI485\\emmons_kelsea\\data\\roseate_terns.txt"
+```
+
+```{r}
+roseate_terns <- read_tsv("roseate_terns.txt")
+roseate_terns
+```
+
+```{r}
+roseate_tidy <- roseate_terns %>% 
+  gather(key = "pop_name", value = "pop_size", AR:JC)
+
+roseate_tidy
+```
+
+####Filter out missing counts.
+```{r}
+filter(roseate_tidy, !is.na(pop_size))
+```
+
+```{r}
+ggplot(data = roseate_tidy) + 
+  geom_line(mapping = aes(x = year, y = pop_size, color = pop_name)) +
+  xlab("Year") +
+  ylab("Population Size")
+```
+
+It looks like the AR population increased over time while the JR population obviously took a sharp decrease in the 90's and never got back up to what it once was. The line breaks in the data, to me, means that they do not have data for those groups during that time period.
+
+###Darters
+
+####Import
+```{r}
+file_path <- "C:\\BI485\\emmons_kelsea\\hw05\\darter.txt"
+widths <- fwf_widths(c(3,11,1,1,1,3,4,4,4,3,3,2,2 ))
+darter <- read_fwf("darter.txt", comment = "#", col_positions = widths)
+col_names <- c("id","species","riffle","age","sex","length","depth","velocity","temperature","majsub","minsub","majtype","mintype")
+colnames(darter) <- col_names
+darter$riffle <- factor(darter$riffle, levels = c(1,2), ordered = FALSE)
+darter$majtype <- factor(darter$majtype, levels = c("f","sg","lg","c"), ordered = TRUE)
+darter <- filter(darter, species == "spectabile" | species == "caeruleum" | species == "blennioides")
+darter <- subset(darter, select = -c(mintype,minsub))
+colnames(darter)[10] <- "major_substrate"
+colnames(darter)[11] <- "major_type"
+arrange(darter, id)
+darter
+```
+
+
+
+####Plot 1
+
+```{r}
+ggplot(data = darter) + 
+  geom_point(mapping = aes(x = length, y = depth, color = species, shape = species)) + 
+  facet_wrap(~ riffle, nrow = 2)
+```
+Between the two Riffles, you an definitely see a depth change. In the first riffle, there are multiple species up near the 60s, but also shorter in length. While in the second riffle, they are alot shallower, but longer.
+
+####Plot 2
+
+```{r}
+ggplot(data = darter) + 
+  geom_boxplot(mapping = aes(x = species, y = length)) + 
+  facet_wrap(~ riffle, nrow = 2)
+```
+The Riffle #2 definitely shows the mot outliers, while the #1 Riffle only seems to have one.
+
+####Plot 3
+
+```{r}
+ggplot(data = darter) +
+  geom_boxplot(mapping = aes(x = major_substrate, y = length)) +
+  facet_grid(species ~ riffle)
+```
+If I reverse the riffle~species argument, it rotates the charts lables from y to x axis and bunches up information. The original argument is the best presenting one.
+
+
+###Blacklip Abalone
+
+####Chunk 1
+```{r}
+"C:\\BI485\\emmons_kelsea\\data\\abalone.csv"
+abalone <- read_csv("abalone.csv")
+ggplot(data = abalone) + 
+  geom_boxplot(mapping = aes(x = Type, y = Height))
+```
+
+####Chunk 2
+```{r}
+ggplot(data = abalone) + 
+  geom_point(mapping = aes(x = Rings, y = Height))
+```
+Based on this scatterplot, the outliers were not that old.
+
+####Chunk 3
+```{r}
+abalone
+filter(abalone, Height >= 0.5)
+
+abalone <- factor(abalone, levels = c("I", "M", "F"), ordered = TRUE)
+
+ggplot(data = abalone) + 
+  geom_point(mapping = aes(x = Rings, y = Height))
+```
+
+The immatures are smaller than males and females and the females tend to be taller than the males.
+
+####Chunk 4
+```{r}
+filter(abalone, Height == 0)
+abalone2[abalone2 ==0] <- NA
+abalone2
+
+ggplot(data = abalone2) + 
+  geom_point(mapping = aes(x = Rings, y = Height))
+
+```
+
+I renames the 0 value as NA, then plotted a grid with that vector I created and no points appeared on the graph, meaning I successfully removed them.
+####Chunk 5
+
+```{r}
+ggplot(data = abalone) + 
+  geom_point(mapping = aes(x = Rings, y = Height, color = Type, shape = Type))
+
+ggplot(data = abalone) + 
+  geom_point(mapping = aes(x = Rings, y = WholeWeight, color = Type, shape = Type))
+
+
+```
+The first scatterplot is of Height in relation to how old (how many rings) the subject had. You can see that there are a few outliers but for the most part, the older it gets, the taller it gets.
+
+In the second scatterplot, I really like how it turned out. This was a grid to see if the older abalone, do in fact, weigh more. Again, while there are a couple outliers, it seems like abalone between 10 and 15 rings, hit a maximum weight between 1 and 2.
