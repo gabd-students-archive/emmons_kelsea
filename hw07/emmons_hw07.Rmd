@@ -1,0 +1,62 @@
+---
+title: "HW07 Part 1"
+author: "Kelsea Emmons"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(GGally)
+library(patchwork)
+```
+
+###Part 1 - Recreate the Zuur Figures
+####Import and Wrangle
+```{r}
+
+```
+
+####Figure 2: Outliers
+```{r}
+
+```
+
+####Figure 3: Outliers
+```{r}
+
+```
+
+####Figure 5: Distribution
+```{r}
+
+```
+
+####Figure 10: Relationships
+```{r}
+
+```
+
+####Figure 11: Interactions
+```{r}
+
+```
+
+###Part 2: Habitat parameters for Aegla crabs
+####Data Exploration: Crabs
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+ 
