@@ -67,6 +67,9 @@ darter_summary
 ```
 
 ####Table of Summary Means
+```{r}
+darter_summary
+```
 
 
 ####Plot 1
@@ -128,22 +131,20 @@ mean_tarsus
 ```
 
 ```{r}
-log_mass <- mutate(feathers, log(mass))
+feathers <- mutate(feathers, log_mass = log(mass))
 
-log_tarsus <- mutate(feathers, log(tarsus))
+feathers <- mutate(feathers, log_tarsus = log(tarsus))
 
-log_mass
-log_tarsus
 ```
 
 ```{r}
 major_axis <- sma(log_mass ~ log_tarsus, data = feathers)
 summary(major_axis)
-b <- coef(major_axis)
+b <- coef(major_axis[2])
 ```
 
 ```{r}
-new_smi <- mutate(feathers, mass * (frac{mean_tarsus/tarsus})^b)
+new_smi <- mutate(feathers, mass* \frac{mean_tarsus}{tarsus}^b
 ```
 
 ####Summary Data
