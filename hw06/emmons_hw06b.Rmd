@@ -1,5 +1,5 @@
 ---
-title: "HW05 Part 2: Importing"
+title: "HW06 Part 2"
 author: "Kelsea Emmons"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output: html_notebook
@@ -28,13 +28,13 @@ darter
 
 ####Wrangle Data
 ```{r}
-mutate(darter,
+darter <- mutate(darter,
        total_substrate = majsub + minsub)
 ```
 
 ####Change Riffle Values
 ```{r}
-mutate(darter,
+darter <- mutate(darter,
        riffle = ifelse(riffle == 1,
                            "Riffle 1",
                            "Riffle 2"))
@@ -43,14 +43,14 @@ mutate(darter,
 Change Length Data from cm to mm.
 
 ```{r}
-mutate(darter,
+darter <- mutate(darter,
        length = length * 10)
 ```
 
 Change the sex values of f and m to Female and Male.
 
 ```{r}
-mutate(darter,
+darter <- mutate(darter,
        sex = ifelse(sex == "f",
                            "Female",
                            "Male"))
@@ -107,14 +107,10 @@ ggplot(data = darter2, mapping = aes(x = species, y = length)) +
 ####Import Data
 ```{r}
 "C:\\BI485\\emmons_kelsea\\hw06\\feathers.csv"
-feathers <- read_csv("feathers.csv")
+feathers <- read_csv("feathers.csv", locale = locale(decimal_mark = ","))
 feathers
 ```
 I believe that this data is tidy. Each variable has its own column, each observation has its own row and each value has its own cell.
-
-```{r}
-format(feathers, decimal.move = ",")
-```
 
 
 ```{r}
