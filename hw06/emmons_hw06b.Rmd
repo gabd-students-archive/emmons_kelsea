@@ -124,7 +124,7 @@ feathers
 
 ####Wrangle Data
 ```{r}
-mean_tarsus <- summarise(feathers, mean_tarsus = mean(tarsus, na.rm = TRUE))
+mean_tarsus <- mutate(feathers, mean_tarsus = mean(tarsus, na.rm = TRUE))
 ```
 ```{r}
 mean_tarsus
@@ -140,11 +140,13 @@ feathers <- mutate(feathers, log_tarsus = log(tarsus))
 ```{r}
 major_axis <- sma(log_mass ~ log_tarsus, data = feathers)
 summary(major_axis)
-b <- coef(major_axis[2])
+b <- coef(major_axis)[2]
 ```
 
 ```{r}
-new_smi <- mutate(feathers, mass* \frac{mean_tarsus}{tarsus}^b
+new_smi <- mutate(feathers,
+                   new_smi = mass*(mean_tarsus/tarsus)^b)
+
 ```
 
 ####Summary Data
