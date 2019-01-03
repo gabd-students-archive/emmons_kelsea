@@ -8,7 +8,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 ```
 
 ## Chapter 3
@@ -57,6 +57,8 @@ Answer the questions *completely.* Some answers will require you to write code i
 **1:** Run ggplot(data = mpg). What do you see?
 
 When I ran this data chunk, it produced a table of cars and their respective specs.
+
+# should have produced a blank gray screen. You ran `ggplot::mpg`, which is not what the question asks you to do.
 
 **2:** How many rows are in `mpg`? How many columns? **Hint:** Use the `dim()` function. Type `dim()` in the console to learn what `dim()` does.
 
@@ -207,6 +209,8 @@ You should put the variable with more unique levels or more "sporadic" data in t
 
 To draw a line chart, you would use the line geom. For boxplots, the boxplot geom. For histograms, use the histogram geom. To create an area chart, use the area geom.
 
+# Should write the actual geoms, like `geom_line`, etc.
+
 **2:** Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
 
 This code will create a scatterplot with `displ` and `hwy` as the x and y axis respectively, and have `drv` as different color points across the grid. There will also be a smooth line following the corrolation of the data.
@@ -233,7 +237,9 @@ They will look the same. All that is different is that one code passed a set of 
 
 **6:** Recreate the R code necessary to generate the following graphs. **Note:** Enter a separate code chunk for each graph, numbered 1 to 6, starting row-wise at upper left. 
 
-1: upper left.
+1: upper left. 
+
+# Size in wrong position, so points and lines too bulky. They need to be outside of the `aes` mapping.
 
 ```{r}
 ggplot(data = mpg) + 
