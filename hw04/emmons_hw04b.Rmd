@@ -90,10 +90,10 @@ In this boxplot, I flipped the x and y axis to make room for the long names in t
 msleep
 ```
 ```{r}
-ggplot(data = msleep) +
-  geom_boxplot(mapping = aes(x = conservation, y = awake, color = conservation)) +
-  geom_point(mapping = aes(x = vore, y = sleep_rem, color = conservation)) +
-  geom_jitter(mapping = aes(x = vore, y = sleep_rem, color = conservation)) +
+ggplot(data = msleep, mapping = aes(x = conservation, y = awake, color = conservation)) +
+  geom_boxplot() +
+  geom_point() +
+  geom_jitter() +
   xlab("Conservation") +
   ylab("Awake") +
   scale_color_discrete(name = "Conservation") +
