@@ -148,3 +148,43 @@ sort(in_between, decreasing = TRUE)
 ```
 
 
+###Part 2: Wrangling and plotting with dates
+
+```{r}
+lake_raw <- read.csv("lake_ice.csv")
+lake_raw
+```
+
+```{r}
+lake_ice <- filter(lake_raw, lakecode == "DMR1")
+lake_ice
+```
+
+```{r}
+lake_ice <- select(lake_ice, iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day)
+lake_ice
+```
+
+```{r}
+lake_ice2 <- lake_ice %>% 
+  select(iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day) %>% 
+  mutate(ice_on = make_date(iceon_year, iceon_month, iceon_day),
+         ice_off = make_date(iceoff_year, iceoff_month, iceoff_day))
+lake_ice2
+```
+
+```{r}
+lake_ice3 <- lake_ice2 %>% 
+  mutate(duration = as.numeric(ice_off - ice_on))
+lake_ice3 
+####in days
+```
+
+```{r}
+ggplot(data = lake_ice3) +
+  geom_line(mapping = aes(x = iceoff_year, y = duration), na.rm = TRUE)+
+    coord_cartesian(xlim = c(1850, 2013))+
+                    labs(x = "Year", y = "Days of Ice")
+  
+```
+
