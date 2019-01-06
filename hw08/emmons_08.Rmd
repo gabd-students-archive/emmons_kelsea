@@ -11,6 +11,7 @@ editor_options:
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(dplyr)
 ```
 
 ###Part 1: Play Date
@@ -150,6 +151,8 @@ sort(in_between, decreasing = TRUE)
 
 ###Part 2: Wrangling and plotting with dates
 
+####Lake Ice
+
 ```{r}
 lake_raw <- read.csv("lake_ice.csv")
 lake_raw
@@ -184,7 +187,110 @@ lake_ice3
 ggplot(data = lake_ice3) +
   geom_line(mapping = aes(x = iceoff_year, y = duration), na.rm = TRUE)+
     coord_cartesian(xlim = c(1850, 2013))+
-                    labs(x = "Year", y = "Days of Ice")
+                    labs(x = "Year", y = "Ice Duration (days)")
   
+```
+
+####Soil Carbon Dioxide
+```{r}
+soil_co2_raw <- read.delim("C:\\BI485\\emmons_kelsea\\hw08\\soil_co2.txt")
+soil_co2_raw
+```
+
+```{r}
+january <- make_date(year = 2006, day = 1, month = 1)
+january
+```
+
+```{r}
+soil <- soil_co2_raw %>% 
+  rename(Day_number = DayN..) %>% 
+  rename(Day = Datecode..) %>% 
+  rename(Minute = Min..) %>% 
+  rename(Vegetation_sample = Veg..) %>% 
+  rename(Plot = Plot..) %>% 
+  rename(Group = Group..) %>% 
+  rename(CO2_concentration = CorrCO2..) %>% 
+  rename(Soil_type = SoilT..)
+soil
+```
+
+```{r}
+soil2 <- soil %>% 
+  mutate(Date = january + Day,
+         Year = year(Date),
+         Month = month(Date, label = TRUE, abbr = TRUE)) %>% 
+group_by(Year, Month)
+soil2
+```
+
+
+```{r}
+soil3 <- soil2 %>% 
+  summarise(
+    meanCO2 = mean(CO2_concentration),
+    se_Co2 = sd(CO2_concentration)/sqrt(NROW(soil2))
+  )
+soil3
+```
+
+```{r}
+ggplot(data = soil3) +
+  geom_col(aes(x = Month, y = meanCO2)) +
+  geom_linerange(aes(x = Month, ymin = meanCO2 - se_Co2, ymax = meanCO2 + se_Co2)) +
+  facet_wrap(~ Year, ncol = 3)
+```
+
+```{r}
+ggplot(data = soil3) +
+  geom_point(aes(x = Month, y = meanCO2)) +
+  geom_linerange(aes(x = Month, ymin = meanCO2 - se_Co2, ymax = meanCO2 + se_Co2)) +
+  facet_wrap(~Year, nrow = 2)
+```
+
+####Mississippi River Discharge
+```{r}
+thebes <- read_csv("thebes_discharge.csv")
+thebes
+colnames(thebes)
+thebes2 <- thebes %>%
+  gather ("1988":"2018", key = "Year", value = "discharge") %>% 
+  group_by(Year, Month) %>% 
+  mutate(discharge = discharge / 1000,
+         Event = case_when(
+           Year== "1993" ~ "Flood",
+           Year == "2011" ~ "Flood",
+           Year == "1988" ~ "Drought",
+           Year == "2012" ~ "Drought",
+           TRUE ~ "Normal"),
+         average_discharge = mean(discharge), na.rm = FALSE)
+thebes2
+```
+
+```{r}
+eventyears <- thebes2 %>% 
+  filter(Event %in% c("Flood", "Drought"))
+eventyears
+```
+
+```{r}
+plot1 <- thebes2 %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70",
+            size = 0.3) +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)")
+plot1
+```
+
+```{r}
+thebes2 %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70") +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)") +
+  geom_line(data = eventyears, aes(x = Month, y = average_discharge, group = Year, color = Event))
 ```
 
