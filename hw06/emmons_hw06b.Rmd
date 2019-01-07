@@ -144,41 +144,42 @@ b <- coef(major_axis)[2]
 ```
 
 ```{r}
+mean_tarsus <- mean(feathers$tarsus)
 new_smi <- mutate(feathers,
-                   new_smi = mass*(mean_tarsus/tarsus)^b)
-
+                  new_smi = mass*mean_tarsus/tarsus^b)
+new_smi
 ```
 
 ####Summary Data
 ```{r}
-basal_stress <- feathers %>%
-  group_by(site)
-
-basal_mean <- mutate(basal_stress, mean(basal_cort))
-stress_mean <- mutate(basal_stress, mean(stress_cort))
-sd_basal <- mutate(basal_stress, sd(basal_cort, na.rm = TRUE))
-sd_stress <- mutate(basal_stress, sd(stress_cort, na.rm = TRUE))
-
-seym_basal <- mutate(basal_stress, (sd_basal*n)^2)
-seym_stress <- mutate(basal_stress, (sd_stress*n)2)            
+ feathers2 <- group_by(feathers, site)
+basal_mean <- mean(feathers2$basal_cort, na.rm = TRUE)
+stress_mean <- mean(feathers2$stress_cort, na.rm = TRUE)
+basal_sd <- sd(feathers2$basal_cort, na.rm = TRUE)
+stress_sd <- sd(feathers2$stress_cort, na.rm = TRUE)
+basal_se <- mutate(feathers2,
+                   basal_se = basal_sd/6.56)
+stress_se <- mutate(feathers2,
+                    stress_se = stress_sd/6.56)
+           
 
 ```
 
 ####Graph Data
 ```{r}
 ggplot(data = feathers) + 
-  geom_boxplot(mapping = aes(x = new_smi, y = site))
+  geom_boxplot(mapping = aes(x = site, y = new_smi))
 ```
 
 ```{r}
 ggplot(data = feathers) +
   geom_point(mapping = aes(x = site, y = cortB)) +
-  geom_errorbar(mapping = aes(x = site, ymin = seym_basal - 1, ymax = seym_basal+1))
+  geom_errorbar(mapping = aes(x = site, ymin = basal_se - 1, ymax = basal_se +1))
 ```
 
 ```{r}
 ggplot(data = feathers) +
-  geom_point(mapping = aes(x = stress_mean, y = seym_stress)) +
-  geom_linerage(mapping = aes(x = stress_mean, y = seym_stress))
+  geom_point(mapping = aes(x = stress_mean, y = stress_se)) +
+  geom_linerage(mapping = aes(x = stress_mean, ymin = stress_se -1, ymax = stress_se +1))
 ```
 

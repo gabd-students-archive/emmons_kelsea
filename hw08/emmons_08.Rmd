@@ -1,0 +1,296 @@
+
+---
+title: "HW08"
+author: "Kelsea Emmons"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+```
+
+###Part 1: Play Date
+
+```{r}
+birth_date <- "November 18, 1996"
+anderson <- "9 June 1836"
+anning <-  "1799/05/21"
+ball <- "July 24, 1892"
+earle <- "August, 30 (1935)"
+franklin <- "25th of July, 1920"
+lederberg <- "December 18, 1922"
+mcclintock <- "16061902"
+mlk_birth <- "1/15/29"
+mlk_dream <- "1963 August 08"
+```
+
+####Questions
+1.Convert each date to POSIXct format, using lubridate functions, saving each to a unique variable. Print each result.
+```{r}
+birth_date <- mdy("November 18, 1996")
+anderson <- dmy("9 June 1836")
+anning <- ymd("1799/05/21")
+ball <- mdy("July 24, 1892")
+earle <- mdy("August, 30 (1935)")
+franklin <- dmy("25th of July, 1920")
+lederberg <- mdy("December 18, 1922")
+mcclintock <- dmy("16061902")
+mlk_birth <- mdy("1/15/29")
+mlk_dream <- ymd("1963 August 08")
+birth_date_dttm <- as_datetime(birth_date)
+anderson_dttm <- as_datetime(anderson)
+anning_dttm <- as_datetime(anning)
+ball_dttm <- as_datetime(ball)
+brakhane_dttm <- as_datetime(birth_date)
+earle_dttm <- as_datetime(earle)
+franklin_dttm <- as_datetime(franklin)
+lederberg_dttm <- as_datetime(lederberg)
+mcclintock_dttm <- as_datetime(mcclintock)
+mlk_birth_dttm <- as_datetime(mlk_birth)
+mlk_dream_dttm <- as_datetime(mlk_dream)
+birth_date_dttm
+anderson_dttm
+anning_dttm
+ball_dttm
+brakhane_dttm
+earle_dttm
+franklin_dttm
+lederberg_dttm
+mcclintock_dttm
+mlk_birth_dttm
+mlk_dream_dttm
+```
+
+
+2.Check yours dates to be sure they are correct. If you spot any errors, correct them now using the proper lubridate function(s).
+```{r}
+mlk_birth <- update(mlk_birth, year = 1929)
+mlk_birth
+mlk_birth_dttm <- as_datetime(mlk_birth)
+mlk_birth_dttm
+```
+
+
+3.What day of the week were you born on? Show the full day name, not the abbreviated name or the day number.
+
+```{r}
+wday(birth_date_dttm, label = TRUE, abbr = FALSE)
+```
+
+
+4.What day of the week will your birthday be on this year? Use lubridate’s update function. You can hard code this year but you must figure out how to do it entirely by code for full points. In other words, you code should work just as well next year or five years in the future, without editing.
+
+```{r}
+today <- now()
+year <- year(today)
+birthday_thisyear <- update(birth_date_dttm, year = year)
+birthday_thisyear
+wday(birthday_thisyear, label = TRUE, abbr = FALSE)
+```
+
+
+5.What day of the week would your birthday be on in the Year 2525, if Man is still alive? How old would you be? Here you may hard-code 2525. Show the abbreviated day of the week.
+
+```{r}
+birth_date %>%
+  update(year = 2525) %>% 
+  wday(label = TRUE, abbr = FALSE)
+```
+
+
+6.How many days was it between the birth of Dr. Elizabeth Garrett Anderson and Alice Augusta Ball?
+
+```{r}
+anderson - ball
+```
+
+
+7.What is the duration between Martin Luther King Jr.’s birth date and his I Had a Dream speech.
+```{r}
+mlk_dream_years <- mlk_dream - mlk_birth
+mlk_dream_years <- as.duration(mlk_dream_years)
+mlk_dream_years
+```
+
+
+####Enter the eight POSIXct compatible birth dates into a vector, including your own, in the order they are given above. Name each element of the vector with the last name of each person.
+
+```{r}
+vector <- c("1996-11-18","1836-06-09","1799-05-21","1892-07-24","1935-08-30","1920-07-25","1922-12-18","1902-06-16","1929-01-15")
+names(vector) <- c("emmons", "anderson", "anning", "ball", "earle", "franklin", "lederberg", "mcclintock", "king")
+vector
+```
+
+1. Of the eight birth dates from above, including your own, which of them are leap years? You must
+    start with the POSIXct dates in your vector, and
+    display the final result as only the years of the leap years, not the date.     You should end up with 3-4 years, depending on whether your birth year was a     leap year. If your results show the full birth dates, then you need to apply     one of the lubridate functions.
+    
+```{r}
+years <- year(vector)
+leapyears <- leap_year(years)
+leap <- years[leapyears]
+leap
+```
+
+2.Subtract each birth date in the vector from your own to calculate the number of days that have passed between their birth dates and yours. Sort the results from greatest number of days to fewest. You should be listed last (or near the end) with a difference of 0 days.
+
+```{r}
+everyones_bdays <- ymd(vector)
+birthday <- everyones_bdays[1]
+in_between <- birthday - everyones_bdays
+names(in_between) <- c("emmons", "anderson", "anning", "ball", "earle", "franklin", "lederberg", "mcclintock", "king")
+sort(in_between, decreasing = TRUE)
+
+```
+
+
+###Part 2: Wrangling and plotting with dates
+
+####Lake Ice
+
+```{r}
+lake_raw <- read.csv("lake_ice.csv")
+lake_raw
+```
+
+```{r}
+lake_ice <- filter(lake_raw, lakecode == "DMR1")
+lake_ice
+```
+
+```{r}
+lake_ice <- select(lake_ice, iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day)
+lake_ice
+```
+
+```{r}
+lake_ice2 <- lake_ice %>% 
+  select(iceon_year, iceon_month, iceon_day, iceoff_year, iceoff_month, iceoff_day) %>% 
+  mutate(ice_on = make_date(iceon_year, iceon_month, iceon_day),
+         ice_off = make_date(iceoff_year, iceoff_month, iceoff_day))
+lake_ice2
+```
+
+```{r}
+lake_ice3 <- lake_ice2 %>% 
+  mutate(duration = as.numeric(ice_off - ice_on))
+lake_ice3 
+####in days
+```
+
+```{r}
+ggplot(data = lake_ice3) +
+  geom_line(mapping = aes(x = iceoff_year, y = duration), na.rm = TRUE)+
+    coord_cartesian(xlim = c(1850, 2013))+
+                    labs(x = "Year", y = "Ice Duration (days)")
+  
+```
+
+####Soil Carbon Dioxide
+```{r}
+soil_co2_raw <- read.delim("C:\\BI485\\emmons_kelsea\\hw08\\soil_co2.txt")
+soil_co2_raw
+```
+
+```{r}
+january <- make_date(year = 2006, day = 1, month = 1)
+january
+```
+
+```{r}
+soil <- soil_co2_raw %>% 
+  rename(Day_number = DayN..) %>% 
+  rename(Day = Datecode..) %>% 
+  rename(Minute = Min..) %>% 
+  rename(Vegetation_sample = Veg..) %>% 
+  rename(Plot = Plot..) %>% 
+  rename(Group = Group..) %>% 
+  rename(CO2_concentration = CorrCO2..) %>% 
+  rename(Soil_type = SoilT..)
+soil
+```
+
+```{r}
+soil2 <- soil %>% 
+  mutate(Date = january + Day,
+         Year = year(Date),
+         Month = month(Date, label = TRUE, abbr = TRUE)) %>% 
+group_by(Year, Month)
+soil2
+```
+
+
+```{r}
+soil3 <- soil2 %>% 
+  summarise(
+    meanCO2 = mean(CO2_concentration),
+    se_Co2 = sd(CO2_concentration)/sqrt(NROW(soil2))
+  )
+soil3
+```
+
+```{r}
+ggplot(data = soil3) +
+  geom_col(aes(x = Month, y = meanCO2)) +
+  geom_linerange(aes(x = Month, ymin = meanCO2 - se_Co2, ymax = meanCO2 + se_Co2)) +
+  facet_wrap(~ Year, ncol = 3)
+```
+
+```{r}
+ggplot(data = soil3) +
+  geom_point(aes(x = Month, y = meanCO2)) +
+  geom_linerange(aes(x = Month, ymin = meanCO2 - se_Co2, ymax = meanCO2 + se_Co2)) +
+  facet_wrap(~Year, nrow = 2)
+```
+
+####Mississippi River Discharge
+```{r}
+thebes <- read_csv("thebes_discharge.csv")
+thebes
+colnames(thebes)
+thebes2 <- thebes %>%
+  gather ("1988":"2018", key = "Year", value = "discharge") %>% 
+  group_by(Year, Month) %>% 
+  mutate(discharge = discharge / 1000,
+         Event = case_when(
+           Year== "1993" ~ "Flood",
+           Year == "2011" ~ "Flood",
+           Year == "1988" ~ "Drought",
+           Year == "2012" ~ "Drought",
+           TRUE ~ "Normal"),
+         average_discharge = mean(discharge), na.rm = FALSE)
+thebes2
+```
+
+```{r}
+eventyears <- thebes2 %>% 
+  filter(Event %in% c("Flood", "Drought"))
+eventyears
+```
+
+```{r}
+plot1 <- thebes2 %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70",
+            size = 0.3) +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)")
+plot1
+```
+
+```{r}
+thebes2 %>%
+  ggplot() +
+  geom_line(aes(x = Month, y = average_discharge, group = Year),
+            color = "gray70") +
+  labs(x = NULL,
+       y = "Discharge (cf/s, thousands)") +
+  geom_line(data = eventyears, aes(x = Month, y = average_discharge, group = Year, color = Event))
+```
+
