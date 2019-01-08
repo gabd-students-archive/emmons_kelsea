@@ -1,0 +1,91 @@
+---
+title: "HW09"
+author: "Kelsea Emmons"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+```{r}
+library(tidyverse)
+library(ggthemes)
+```
+
+###Part 1: DNA Strings
+
+####Import Data
+```{r}
+beta_gliadin_raw <- read_lines("C:\\BI485\\emmons_kelsea\\hw09\\beta_gliadin.txt", skip = 1)
+beta_gliadin_raw
+```
+
+####From Many Strings to One
+```{r}
+beta_gliadin <- beta_gliadin_raw %>% 
+  str_replace_all("\\s", "\\") %>% 
+  str_replace_all("\\d", "\\") 
+beta_gliadin
+```
+
+```{r}
+beta_gliadin <- beta_gliadin %>% 
+  str_c(collapse = "")
+beta_gliadin
+```
+
+```{r}
+
+```
+
+####Sequence Analysis: Find the Promoter Region
+```{r}
+
+```
+
+###Part 2: Ants
+
+####Import Data
+```{r}
+
+```
+
+####Wrangle the Data
+```{r}
+
+```
+
+####Plot the Data
+```{r}
+
+```
+
+###Part 3: Phlox Flowers
+
+####Import and Wrangle First Data Set
+```{r}
+
+```
+
+####Import and Wrangle the Second Data Set
+```{r}
+
+```
+
+####Join the Datasets
+```{r}
+
+```
+
+####Plotting
+```{r}
+
+```
+
+####Improving the Plots
+```{r}
+
+```
+
+###Part 4: Customize Your Plots
+
+
