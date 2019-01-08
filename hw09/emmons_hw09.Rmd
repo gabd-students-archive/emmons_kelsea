@@ -34,12 +34,19 @@ beta_gliadin
 ```
 
 ```{r}
-
+beta_gliadin <- beta_gliadin %>% 
+  str_to_upper()
+beta_gliadin
+str_length(beta_gliadin)
 ```
 
 ####Sequence Analysis: Find the Promoter Region
 ```{r}
-
+str_count(beta_gliadin, "^ACGT")
+```
+```{r}
+str_count(beta_gliadin, "ATG")
+str_count(beta_gliadin, "TGA|TAA")
 ```
 
 ###Part 2: Ants
