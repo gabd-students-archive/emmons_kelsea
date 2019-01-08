@@ -49,6 +49,42 @@ str_count(beta_gliadin, "ATG")
 str_count(beta_gliadin, "TGA|TAA")
 ```
 
+```{r}
+caat_box <- "CCAAT"
+tata_box <- "CTATAA"
+str_count(beta_gliadin, caat_box)
+str_count(beta_gliadin, tata_box)
+```
+
+```{r}
+caat_seq <- "CCAAT.{100,150}ATG"
+str_count(beta_gliadin, caat_seq)
+```
+
+```{r}
+tata_seq <- "CTATAA.{50,100}ATG"
+str_count(beta_gliadin, tata_seq)
+```
+
+```{r}
+caat_seqs_all <- str_extract_all(beta_gliadin, caat_seq, simplify = TRUE)
+str_length(caat_seqs_all)
+caat_seqs_all
+```
+
+```{r}
+str_which(caat_seqs_all, tata_box)
+promoter <- str_subset(caat_seqs_all, tata_box)
+```
+
+```{r}
+promoter
+```
+```{r}
+str_length(promoter)
+```
+
+
 ###Part 2: Ants
 
 ####Import Data
