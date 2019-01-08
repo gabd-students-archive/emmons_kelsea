@@ -282,4 +282,69 @@ phlox4 %>%
 
 ###Part 4: Customize Your Plots
 
+####Plot 1
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_bw() +
+  scale_shape_manual(values = c(21:24)) +
+  scale_fill_brewer(palette = "Set1") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
+####Plot 2
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width, color = syndrome_group)) +
+  labs(color = "Syndrome", x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_bw() +
+  scale_shape_manual(values = c(21:24)) +
+  scale_color_viridis_d(option="viridis")
+```
+
+####Plot 3
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 fill = syndrome_group, color = syndrome_group),
+             size = 2) +
+  labs(fill = "Syndrome", color = "Syndrome",
+       x = "Max Length (cm)",
+       y = "Max Width (cm)") +
+  theme_minimal() +
+  scale_color_viridis_d(option="magma") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
+```
+
+####Plot 4 (ugly)
+
+```{r}
+ugly_colors <- c("#D2691E", "#B3C005", "#91A92A", "#7A3005")
+
+
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = max_length,
+                 y = max_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group,
+                 size = 2)) +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_manual(values = ugly_colors)
+```
 
