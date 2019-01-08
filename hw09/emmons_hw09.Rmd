@@ -54,16 +54,20 @@ caat_box <- "CCAAT"
 tata_box <- "CTATAA"
 str_count(beta_gliadin, caat_box)
 str_count(beta_gliadin, tata_box)
+caat_box
+tata_box
 ```
 
 ```{r}
 caat_seq <- "CCAAT.{100,150}ATG"
 str_count(beta_gliadin, caat_seq)
+caat_seq
 ```
 
 ```{r}
 tata_seq <- "CTATAA.{50,100}ATG"
 str_count(beta_gliadin, tata_seq)
+tata_seq
 ```
 
 ```{r}
@@ -89,12 +93,20 @@ str_length(promoter)
 
 ####Import Data
 ```{r}
-
+ants_raw <- read.csv("C:\\BI485\\emmons_kelsea\\hw09\\ants.csv")
+ants_raw
 ```
 
 ####Wrangle the Data
 ```{r}
-
+ants <- ants_raw %>% 
+  gather(key = species, value = abundance, matches("\\w\\.\\w", ignore.case = FALSE))
+ants
+```
+```{r}
+ants <- ants %>% 
+  select(-c(season))
+ants
 ```
 
 ####Plot the Data
@@ -106,27 +118,166 @@ str_length(promoter)
 
 ####Import and Wrangle First Data Set
 ```{r}
+flower_size_raw <- read.csv("C:\\BI485\\emmons_kelsea\\hw09\\flower_size.csv")
+flower_size_raw
+```
 
+```{r}
+flower_size <- flower_size_raw %>% 
+  filter(!is.na(Flower.number))
+flower_size
+```
+
+```{r}
+flower_size <- flower_size %>% 
+  select(species = Species, cor_length = Corolla.length..cm., throat_width = Corolla.width.throat..cm.) %>% 
+flower_size 
+```
+
+```{r}
+flower_size <- flower_size %>% 
+  separate(species, into = c("genus", "species"))
+ flower_size 
+```
+
+```{r}
+flower_size <- flower_size %>% 
+  group_by(genus, species) %>% 
+flower_size
+```
+
+```{r}
+flower_size_summary <- flower_size %>% 
+  summarize(mean_length = mean(cor_length), mean_width = mean(throat_width), max_length = max(cor_length), max_width = max(throat_width))
+flower_size_summary
 ```
 
 ####Import and Wrangle the Second Data Set
 ```{r}
-
+pollinators_raw <- read.csv("C:\\BI485\\emmons_kelsea\\hw09\\flower_pollinators.csv", na.strings = c("", "NA"))
+pollinators_raw
 ```
+
+```{r}
+pollinators <- pollinators_raw %>% 
+  select(-c(Color, starts_with("Source"))) %>% 
+  filter(!is.na(Pollinator)) %>%
+  separate(ï..Species, into = c("genus", "species")) 
+pollinators
+```
+
+```{r}
+pollinators <- pollinators %>% 
+    separate(Pollinator, into = "Syndrome", sep = " |, ")
+pollinators
+```
+ 
+
 
 ####Join the Datasets
 ```{r}
-
+phlox <- inner_join(flower_size_summary, pollinators, by = c("genus", "species"))
+phlox
 ```
 
 ####Plotting
 ```{r}
-
+ggplot(data = phlox) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome))
 ```
+
+```{r}
+phlox2 <- phlox %>% 
+  mutate(
+    Syndrome = str_replace(Syndrome, "bee$", "bees"),
+    Syndrome = str_replace(Syndrome, "beetle$", "beetles"))
+phlox2
+```
+
+```{r}
+ggplot(data = phlox2) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome))
+```
+
+```{r}
+phlox2 %>% 
+  group_by(Syndrome) %>% 
+  count(Syndrome)
+```
+
+```{r}
+phlox3 <- phlox2 %>% 
+  mutate(
+    Syndrome = str_replace(Syndrome, "beetles|flies", "other insects"))
+phlox3
+```
+```{r}
+ggplot(data = phlox3) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = Syndrome))
+```
+
+```{r}
+phlox4 <- phlox3 %>% 
+  mutate(syndrome_group = case_when(Syndrome == "hummingbird" ~ "Bird",Syndrome == "bat" ~ "Mammal",Syndrome == "autogamous" ~ "Autogamous",TRUE ~ "Insect"))
+phlox4
+```
+
+```{r}
+ggplot(data = phlox4) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group))
+```
+
 
 ####Improving the Plots
 ```{r}
+ggplot(data = phlox4) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group)) +
+  scale_color_brewer(type = "qual", palette = "Dark2")
+```
 
+```{r}
+ggplot(data = phlox4) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group)) +
+  scale_color_viridis_d(option="plasma")
+
+```
+
+
+```{r}
+ggplot(data = phlox4) +
+  geom_point(mapping = aes(x = mean_length, y = mean_width, color = syndrome_group, shape = syndrome_group)) +
+  scale_shape_manual(values = c(22:25)) +
+  scale_color_viridis_d(option="plasma")
+```
+
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group)) +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_manual(values = semo_palette)
+```
+
+```{r}
+phlox4 %>% 
+  ggplot() +
+  geom_point(aes(x = mean_length,
+                 y = mean_width,
+                 shape = syndrome_group,
+                 fill = syndrome_group),
+             size = 2) +
+  labs(shape = "Syndrome",
+       fill = "Syndrome",
+       x = "Mean Length (cm)",
+       y = "Mean Width (cm)") +
+  theme_tufte() +
+  scale_shape_manual(values = c(22:25)) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
 ```
 
 ###Part 4: Customize Your Plots
