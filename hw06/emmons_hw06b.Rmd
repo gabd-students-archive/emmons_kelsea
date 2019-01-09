@@ -19,7 +19,7 @@ library(smatr)
 ```{r}
 file_path <- "C:\\BI485\\emmons_kelsea\\hw05\\darter.txt"
 widths <- fwf_widths(c(3,11,1,1,1,3,4,4,4,3,3,2,2 ))
-darter <- read_fwf("darter.txt", comment = "#", col_positions = widths)
+darter <- read_fwf("data/darters.txt", comment = "#", col_positions = widths)
 col_names <- c("id","species","riffle","age","sex","length","depth","velocity","temperature","majsub","minsub","majtype","mintype")
 colnames(darter) <- col_names
 darter <- filter(darter, species == "spectabile" | species == "caeruleum" | species == "blennioides")
@@ -110,7 +110,7 @@ ggplot(data = darter2, mapping = aes(x = species, y = length)) +
 ####Import Data
 ```{r}
 "C:\\BI485\\emmons_kelsea\\hw06\\feathers.csv"
-feathers <- read_csv("feathers.csv", locale = locale(decimal_mark = ","))
+feathers <- read_csv("data/feathers.csv", locale = locale(decimal_mark = ","))
 feathers
 ```
 I believe that this data is tidy. Each variable has its own column, each observation has its own row and each value has its own cell.
@@ -148,21 +148,30 @@ mean_tarsus <- mean(feathers$tarsus)
 new_smi <- mutate(feathers,
                   new_smi = mass*mean_tarsus/tarsus^b)
 new_smi
+
+feathers <- feathers %>% 
+  mutate(new_smi = mass * (mean_tarsus/tarsus) ^ b)
 ```
 
 ####Summary Data
 ```{r}
- feathers2 <- group_by(feathers, site)
-basal_mean <- mean(feathers2$basal_cort, na.rm = TRUE)
-stress_mean <- mean(feathers2$stress_cort, na.rm = TRUE)
-basal_sd <- sd(feathers2$basal_cort, na.rm = TRUE)
-stress_sd <- sd(feathers2$stress_cort, na.rm = TRUE)
-basal_se <- mutate(feathers2,
-                   basal_se = basal_sd/6.56)
-stress_se <- mutate(feathers2,
-                    stress_se = stress_sd/6.56)
+#  feathers2 <- group_by(feathers, site)
+# basal_mean <- mean(feathers2$basal_cort, na.rm = TRUE)
+# stress_mean <- mean(feathers2$stress_cort, na.rm = TRUE)
+# basal_sd <- sd(feathers2$basal_cort, na.rm = TRUE)
+# stress_sd <- sd(feathers2$stress_cort, na.rm = TRUE)
+# basal_se <- mutate(feathers2,
+#                    basal_se = basal_sd/6.56)
+# stress_se <- mutate(feathers2,
+#                     stress_se = stress_sd/6.56)
            
-
+feathers2 <- feathers %>% 
+  group_by(site) %>% 
+  summarize(n = n(),
+            basal_mean = mean(basal_cort, na.rm = TRUE),
+            basal_se = sd(basal_cort, na.rm = TRUE)/sqrt(n),
+            stress_mean = mean(stress_cort, na.rm =TRUE),
+            stress_se = sd(stress_cort, na.rm = TRUE)/sqrt(n))
 ```
 
 ####Graph Data
@@ -172,14 +181,31 @@ ggplot(data = feathers) +
 ```
 
 ```{r}
-ggplot(data = feathers) +
-  geom_point(mapping = aes(x = site, y = cortB)) +
-  geom_errorbar(mapping = aes(x = site, ymin = basal_se - 1, ymax = basal_se +1))
+ggplot(data = feathers2) +
+  geom_point(mapping = aes(x = site, y = basal_mean)) +
+  geom_errorbar(mapping = aes(x = site, 
+                              ymin = basal_mean - basal_se, 
+                              ymax = basal_mean + basal_se))
+
+
+# ggplot(data = feathers2) +
+#   geom_point(mapping = aes(x = site, y = cortB)) +
+#   geom_errorbar(mapping = aes(x = site, ymin = basal_se - 1, ymax = basal_se +1))
+
 ```
 
 ```{r}
 ggplot(data = feathers) +
   geom_point(mapping = aes(x = stress_mean, y = stress_se)) +
-  geom_linerage(mapping = aes(x = stress_mean, ymin = stress_se -1, ymax = stress_se +1))
+  geom_linerange(mapping = aes(x = stress_mean, ymin = stress_se -1, ymax = stress_se +1))
+
+
+ggplot(data = feathers2) +
+  geom_point(mapping = aes(x = site, y = stress_mean)) +
+  geom_linerange(mapping = aes(x = site, 
+                               ymin = stress_mean - stress_se, 
+                               ymax = stress_mean + stress_se))
+
+
 ```
 
