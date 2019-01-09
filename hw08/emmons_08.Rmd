@@ -217,7 +217,7 @@ soil
 
 ```{r}
 soil2 <- soil %>% 
-  mutate(Date = january + Day,
+  mutate(Date = january + Day_number,
          Year = year(Date),
          Month = month(Date, label = TRUE, abbr = TRUE)) %>% 
 group_by(Year, Month)
@@ -226,10 +226,10 @@ soil2
 
 
 ```{r}
-soil3 <- soil2 %>% 
+soil3 <- soil2 %>%
   summarise(
     meanCO2 = mean(CO2_concentration),
-    se_Co2 = sd(CO2_concentration)/sqrt(NROW(soil2))
+    se_Co2 = sd(CO2_concentration)/sqrt(n())
   )
 soil3
 ```
