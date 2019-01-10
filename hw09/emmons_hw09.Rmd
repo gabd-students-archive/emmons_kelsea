@@ -109,9 +109,34 @@ ants <- ants %>%
 ants
 ```
 
+```{r}
+ants2 <- ants %>% 
+  mutate(species = str_replace(species, pattern = "(^[A-Z]*\\w{3})\\w{3,}\\.(\\w{4})\\w{2,}", replacement = "\\1\\2"))
+ants2
+```
+
+```{r}
+ants3 <- ants2 %>% 
+  mutate(year = factor(year, levels = c("2010", "2011"), labels = c("2010", "2011"), ordered = TRUE))
+ants3
+```
+
+```{r}
+ants3 <- ants3 %>% 
+  group_by(year, species) %>% 
+  summarize(total = sum(abundance, na.rm = TRUE))
+ants3
+```
+
+
 ####Plot the Data
 ```{r}
-
+ggplot(data = ants3, aes(x = reorder(species, total), y = total, group = species)) + 
+  geom_line() +
+  geom_point(aes(shape = year), size = 2) +
+  coord_flip() +
+  labs(x = NULL, y = "Total Abundance", shape = "Year") +
+  theme_minimal()
 ```
 
 ###Part 3: Phlox Flowers
