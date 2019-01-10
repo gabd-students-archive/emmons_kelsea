@@ -126,9 +126,7 @@ feathers
 ```{r}
 mean_tarsus <- mutate(feathers, mean_tarsus = mean(tarsus, na.rm = TRUE))
 ```
-```{r}
-mean_tarsus
-```
+
 
 ```{r}
 feathers <- mutate(feathers, log_mass = log(mass))
@@ -140,27 +138,24 @@ feathers <- mutate(feathers, log_tarsus = log(tarsus))
 ```{r}
 major_axis <- sma(log_mass ~ log_tarsus, data = feathers)
 summary(major_axis)
-b <- coef(major_axis)[2]
+coef(major_axis)
+b <- coef(major_axis)["slope"]
 ```
 
 ```{r}
-mean_tarsus <- mean(feathers$tarsus)
-new_smi <- mutate(feathers,
-                  new_smi = mass*mean_tarsus/tarsus^b)
-new_smi
+feathers <- feathers %>% 
+  mutate(
+    new_smi = mass * (mean_tarsus/tarsus)^b)
 ```
 
 ####Summary Data
 ```{r}
- feathers2 <- group_by(feathers, site)
-basal_mean <- mean(feathers2$basal_cort, na.rm = TRUE)
-stress_mean <- mean(feathers2$stress_cort, na.rm = TRUE)
-basal_sd <- sd(feathers2$basal_cort, na.rm = TRUE)
-stress_sd <- sd(feathers2$stress_cort, na.rm = TRUE)
-basal_se <- mutate(feathers2,
-                   basal_se = basal_sd/6.56)
-stress_se <- mutate(feathers2,
-                    stress_se = stress_sd/6.56)
+feathers2 <- feathers %>% 
+  group_by(site) %>% 
+  summarize(basal_mean = mean(basal_cort, na.rm = TRUE),
+            basal_se = sd(basal_cort, na.rm = TRUE)/sqrt(n()),
+            stress_mean = mean(stress_cort, na.rm =TRUE),
+            stress_se = sd(stress_cort, na.rm = TRUE)/sqrt(n()))
            
 
 ```
@@ -172,13 +167,13 @@ ggplot(data = feathers) +
 ```
 
 ```{r}
-ggplot(data = feathers) +
+ggplot(data = feathers2) +
   geom_point(mapping = aes(x = site, y = cortB)) +
   geom_errorbar(mapping = aes(x = site, ymin = basal_se - 1, ymax = basal_se +1))
 ```
 
 ```{r}
-ggplot(data = feathers) +
+ggplot(data = feathers2) +
   geom_point(mapping = aes(x = stress_mean, y = stress_se)) +
   geom_linerage(mapping = aes(x = stress_mean, ymin = stress_se -1, ymax = stress_se +1))
 ```
